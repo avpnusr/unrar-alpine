@@ -6,7 +6,9 @@ ARG UNRAR_VERSION
 ########################
 FROM alpine:latest AS builder
 ARG UNRAR_VERSION TARGETARCH TARGETVARIANT
-RUN apk add --no-cache build-base wget ca-certificates
+RUN CPUARCH=${TARGETARCH}${TARGETVARIANT} \
+&& if [ $CPUARCH == "armv6" ]; then export QEMU_CPU="arm1176"; fi \
+&& apk add --no-cache build-base wget ca-certificates
 
 WORKDIR /src
 RUN wget -O unrar.tar.gz \
