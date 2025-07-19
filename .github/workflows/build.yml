@@ -40,6 +40,7 @@ jobs:
       - name: Package binaries for release
         run: |
           mkdir -p artifacts
+          ls -la binaries/*
           mv binaries/* artifacts
 
       - name: Create GitHub Release
