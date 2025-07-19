@@ -1,0 +1,68 @@
+name: Build & Release Unrar Binaries
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+env:
+  UNRAR_VERSION: '7.1.8'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU emulation
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and export per-arch binaries
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # build for amd64, arm64, armv7 and armv6
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          # export the final stage filesystem to `binaries/`
+          outputs: type=local,dest=binaries
+          build-args: |
+            UNRAR_VERSION=${{ env.UNRAR_VERSION }}
+
+      - name: Package binaries for release
+        run: |
+          mkdir -p artifacts
+          mv binaries/* artifacts
+
+      - name: Create GitHub Release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.UNRAR_VERSION }}
+          release_name: v${{ env.UNRAR_VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Upload assets to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPLOAD_URL: ${{ steps.release.outputs.upload_url }}
+        run: |
+          for asset in artifacts/unrar*; do
+            echo "Uploading $asset..."
+            curl -sS -X POST \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Content-Type: application/gzip" \
+              --data-binary @"$asset" \
+              "$UPLOAD_URL?name=$(basename "$asset")"
+          done
