@@ -44,7 +44,7 @@ jobs:
         run: |
           mkdir -p artifacts
           ls -la binaries/*
-          mv binaries/unrar_** artifacts
+          sh -c 'find . -name unrar\* -exec mv {} artifacts/ \;'
 
       - name: Create GitHub Release
         id: release
