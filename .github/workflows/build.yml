@@ -3,14 +3,14 @@ name: Build & Release Unrar Binaries
 on:
   push:
     tags:
-      - '*'
+      - 'v*'  # Trigger on version tags like v1.0, v2.1.3, etc.
 
 permissions:
   contents: write
 
 env:
-  UNRAR_VERSION: ${{ github.ref_name }}
-
+  UNRAR_VERSION: $(echo ${{ github.ref_name }} | sed 's/^v//')
+  
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -52,21 +52,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.UNRAR_VERSION }}
-          release_name: v${{ env.UNRAR_VERSION }}
+          tag_name: ${{ env.UNRAR_VERSION }}
+          release_name: ${{ env.UNRAR_VERSION }}
           draft: false
           prerelease: false
 
       - name: Upload assets to Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          UPLOAD_URL: ${{ steps.release.outputs.upload_url }}
-        run: |
-          for asset in artifacts/*; do
-            echo "Uploading $asset..."
-            curl -sS -X POST \
-              -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @"$asset" \
-              "$UPLOAD_URL?name=$(basename "$asset")"
-          done
+        uses: AButler/upload-release-assets@v3.0
+        with:
+          files: artifacts/*
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: v${{ env.UNRAR_VERSION }}
+
