@@ -33,7 +33,7 @@ jobs:
           # build for amd64, arm64, armv7 and armv6
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           # export the final stage filesystem to `binaries/`
-          outputs: type=local,dest=binaries
+          outputs: type=local,dest=binaries .
           build-args: |
             UNRAR_VERSION=${{ env.UNRAR_VERSION }}
 
