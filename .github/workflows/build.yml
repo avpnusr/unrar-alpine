@@ -43,7 +43,8 @@ jobs:
       - name: Package binaries for release
         run: |
           mkdir -p artifacts
-          mv binaries/unrar* artifacts
+          ls -la binaries/*
+          mv binaries/unrar_** artifacts
 
       - name: Create GitHub Release
         id: release
