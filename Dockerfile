@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-ARG UNRAR_VERSION=7.1.8
+ARG UNRAR_VERSION
 
 ########################
 # 1. Build the unrar binary on Alpine

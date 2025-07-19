@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  UNRAR_VERSION: '7.1.8'
+  UNRAR_VERSION: ${{ github.ref_name }}
 
 jobs:
   build-and-release:
