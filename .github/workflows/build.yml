@@ -16,7 +16,7 @@ jobs:
       - name: Create necessary directories
         run: |
           mkdir -p binaries
-          export UNRAR_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
+          echo "UNRAR_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
 
