@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    if: startsWith(github.ref_name, 'v')
 
     steps:
       - name: Create necessary directories
