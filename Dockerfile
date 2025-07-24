@@ -1,9 +1,6 @@
 # syntax=docker/dockerfile:experimental
 ARG UNRAR_VERSION
 
-########################
-# 1. Build the unrar binary on Alpine
-########################
 FROM alpine:latest AS builder
 ARG UNRAR_VERSION TARGETARCH TARGETVARIANT
 RUN CPUARCH=${TARGETARCH}${TARGETVARIANT} \
@@ -18,9 +15,6 @@ RUN wget -O unrar.tar.gz \
     && make -j2 \
     && cp unrar /unrar_${TARGETARCH}${TARGETVARIANT} 
 
-########################
-# 2. Export a minimal image containing only the binary
-########################
 FROM scratch AS export-unrar
 ARG TARGETARCH TARGETVARIANT
 COPY --from=builder /unrar_${TARGETARCH}${TARGETVARIANT} /
