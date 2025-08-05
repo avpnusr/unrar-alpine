@@ -42,7 +42,6 @@ jobs:
       - name: Package binaries for release
         run: |
           mkdir -p artifacts
-          ls -la binaries/*
           sh -c 'find . -name unrar\* -exec mv {} artifacts/ \;'
 
       - name: Create GitHub Release
