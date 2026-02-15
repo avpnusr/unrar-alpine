@@ -19,7 +19,7 @@ jobs:
           mkdir -p binaries
           echo "UNRAR_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> $GITHUB_ENV
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up QEMU emulation
         uses: docker/setup-qemu-action@v3
